@@ -1,9 +1,11 @@
 package com.uni.connect.model.Enums;
 
+import lombok.Getter;
+
+@Getter
 public enum RoommateSearchStatus {
     ACTIVE("Active"),
-    IMMEDIATE("Immediate"),
-    CLOSED("Closed");
+    INACTIVE("Inactive");
 
     private final String displayName;
 
@@ -11,7 +13,4 @@ public enum RoommateSearchStatus {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
 }

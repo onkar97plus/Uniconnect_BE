@@ -1,6 +1,7 @@
 package com.uni.connect.controller;
 
 import com.uni.connect.dao.UserRepo;
+import com.uni.connect.model.Enums.RoommateSearchStatus;
 import com.uni.connect.model.User;
 import com.uni.connect.service.CrudService;
 import com.uni.connect.service.JwtService;
@@ -73,7 +74,7 @@ public class CrudController {
         String username = jwtService.extractUsername(token.substring(7));
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if(jwtService.isValid(token.substring(7), userDetails)){
-            return crudService.getUserByUni(university);
+            return crudService.getUserByUniAndisActive(university, username, RoommateSearchStatus.ACTIVE);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

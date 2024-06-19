@@ -1,5 +1,6 @@
 package com.uni.connect.dao;
 
+import com.uni.connect.model.Enums.RoommateSearchStatus;
 import com.uni.connect.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -13,4 +14,6 @@ public interface UserRepo extends MongoRepository<User, String> {
     //Optional<User> findByEmail(String email);
 
     List<User> findByUniversity(String university);
+
+    List<User> findByUniversityAndSearchStatus(String university, RoommateSearchStatus searchStatus);
 }

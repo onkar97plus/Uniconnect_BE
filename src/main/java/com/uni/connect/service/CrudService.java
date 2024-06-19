@@ -1,6 +1,7 @@
 package com.uni.connect.service;
 
 import com.uni.connect.dao.UserRepo;
+import com.uni.connect.model.Enums.RoommateSearchStatus;
 import com.uni.connect.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CrudService {
@@ -101,6 +103,21 @@ public class CrudService {
 
         if (!fetchedUsers.isEmpty()){
             return new ResponseEntity<>(fetchedUsers, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<List<User>> getUserByUniAndisActive(String university, String excludeUsername, RoommateSearchStatus searchStatus) {
+
+        List<User> fetchedUsers = userRepo.findByUniversityAndSearchStatus(university, searchStatus);
+
+        List<User> filteredUsers = fetchedUsers.stream()
+                .filter(user -> !user.getUsername().equals(excludeUsername))
+                .toList();
+
+        if (!fetchedUsers.isEmpty()){
+            return new ResponseEntity<>(filteredUsers, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
