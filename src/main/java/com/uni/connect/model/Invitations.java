@@ -7,7 +7,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -21,6 +23,8 @@ public class Invitations {
     private List<String> incoming = new ArrayList<>();
     private List<String> connections = new ArrayList<>();
     private List<String> rejected = new ArrayList<>();
+
+    private Map<String, Boolean> test = new HashMap<>();
 
     public Invitations(String username) {
         this.username = username;

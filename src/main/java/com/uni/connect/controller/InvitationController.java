@@ -1,7 +1,9 @@
 package com.uni.connect.controller;
 
 import com.uni.connect.dao.UserRepo;
+import com.uni.connect.model.User;
 import com.uni.connect.service.CrudService;
+import com.uni.connect.service.InvitationService;
 import com.uni.connect.service.JwtService;
 import com.uni.connect.service.UserDetailsServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class InvitationController {
     @Autowired
     CrudService crudService;
 
+    @Autowired
+    InvitationService invitationService;
+
     @PutMapping("/sendconnreq")
     public void sendConnectionRequest(@RequestHeader("Authorization") String token, @RequestParam String sendReqToUser){
 
@@ -37,22 +42,21 @@ public class InvitationController {
 
         if(jwtService.isValid(token.substring(7), userDetails)){
 
-            crudService.sendInvitations(username, sendReqToUser);
+            invitationService.sendInvitations(username, sendReqToUser);
 
         }
     }
 
     @GetMapping("/sentInvitations")
-    public ResponseEntity<List<String>> getSentInvitations(@RequestHeader("Authorization") String token){
+    public ResponseEntity<List<User>> getSentInvitations(@RequestHeader("Authorization") String token){
         String username = jwtService.extractUsername(token.substring(7));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         if(jwtService.isValid(token.substring(7), userDetails)){
-            ResponseEntity<List<String>> sentInvitations = crudService.getSentInvitations(username);
-            return sentInvitations;
+            return invitationService.getSentInvitations(username);
         }else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonList("Invalid token or token expired."));
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -64,7 +68,7 @@ public class InvitationController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         if(jwtService.isValid(token.substring(7), userDetails)){
-            ResponseEntity<String> acceptedConnection = crudService.acceptInvitation(username, acceptUser);
+            ResponseEntity<String> acceptedConnection = invitationService.acceptInvitation(username, acceptUser);
 
             return acceptedConnection;
         }
