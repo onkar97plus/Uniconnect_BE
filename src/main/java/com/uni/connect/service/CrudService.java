@@ -1,7 +1,7 @@
 package com.uni.connect.service;
 
-import com.uni.connect.dao.InvitationRepo;
 import com.uni.connect.dao.UserRepo;
+import com.uni.connect.model.DTOs.SearchUsersDto;
 import com.uni.connect.model.Enums.RoommateSearchStatus;
 import com.uni.connect.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +98,7 @@ public class CrudService {
     }
 
 
-    public ResponseEntity<List<User>> getUserByUniAndisActive(String university, String excludeUsername, RoommateSearchStatus searchStatus) {
+    public ResponseEntity<List<SearchUsersDto>> getUserByUniAndisActive(String university, String excludeUsername, RoommateSearchStatus searchStatus) {
 
         List<User> fetchedUsers = userRepo.findByUniversityAndSearchStatus(university, searchStatus);
 
@@ -107,7 +107,31 @@ public class CrudService {
                 .toList();
 
         if (!fetchedUsers.isEmpty()) {
-            return new ResponseEntity<>(filteredUsers, HttpStatus.OK);
+            List<SearchUsersDto> searchUsersDtoList = new ArrayList<>();
+            for (User user : filteredUsers) {
+                SearchUsersDto searchUsersDto = new SearchUsersDto();
+
+                searchUsersDto.setFirstName(user.getFirstName());
+                searchUsersDto.setLastName(user.getLastName());
+                searchUsersDto.setReligion(user.getReligion());
+                searchUsersDto.setState(user.getState());
+                searchUsersDto.setYear(user.getYear());
+                searchUsersDto.setStartDate(user.getStartDate());
+                searchUsersDto.setEndDate(user.getEndDate());
+                searchUsersDto.setRoomPreference(user.getRoomPreference());
+                searchUsersDto.setEthnicity(user.getEthnicity());
+                searchUsersDto.setIntakeBatch(user.getIntakeBatch());
+                searchUsersDto.setSmoker(user.isSmoker());
+                searchUsersDto.setDrinker(user.isDrinker());
+                searchUsersDto.setEatingPreference(user.getEatingPreference());
+                searchUsersDto.setAge(user.getAge());
+                searchUsersDto.setUniversity(user.getUniversity());
+                searchUsersDto.setSearchStatus(user.getSearchStatus());
+                searchUsersDto.setUid(user.getUid());
+
+                searchUsersDtoList.add(searchUsersDto);
+            }
+            return new ResponseEntity<>(searchUsersDtoList, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

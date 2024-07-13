@@ -1,8 +1,10 @@
 package com.uni.connect.service;
 
 import com.uni.connect.dao.InvitationRepo;
+import com.uni.connect.dao.UidUnameMapRepo;
 import com.uni.connect.dao.UserRepo;
 import com.uni.connect.model.Invitations;
+import com.uni.connect.model.UidUnameMap;
 import com.uni.connect.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +24,15 @@ public class InvitationService {
     @Autowired
     InvitationRepo invitationRepo;
 
-    public ResponseEntity<String> sendInvitations(String username, String sendReqToUser) {
+    @Autowired
+    UidUnameMapRepo uidUnameMapRepo;
+
+    public ResponseEntity<String> sendInvitations(String username, String sendReqToUserUid) {
+
+        UidUnameMap byUid = uidUnameMapRepo.findByUid(sendReqToUserUid);
+
+        String sendReqToUser = byUid.getUsername();
+
 
         Optional<User> fetchedUser = userRepo.findByUsername(username);
         Optional<User> fetchedUser2 = userRepo.findByUsername(sendReqToUser);

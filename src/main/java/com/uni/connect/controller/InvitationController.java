@@ -37,6 +37,8 @@ public class InvitationController {
     @PutMapping("/sendconnreq")
     public void sendConnectionRequest(@RequestHeader("Authorization") String token, @RequestParam String sendReqToUser){
 
+        System.out.println("uid::" +sendReqToUser);
+
         String username = jwtService.extractUsername(token.substring(7));
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 

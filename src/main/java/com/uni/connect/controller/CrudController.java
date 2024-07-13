@@ -1,6 +1,7 @@
 package com.uni.connect.controller;
 
 import com.uni.connect.dao.UserRepo;
+import com.uni.connect.model.DTOs.SearchUsersDto;
 import com.uni.connect.model.Enums.RoommateSearchStatus;
 import com.uni.connect.model.User;
 import com.uni.connect.service.CrudService;
@@ -69,7 +70,7 @@ public class CrudController {
     }
 
     @GetMapping("/getUsersByUniversity")
-    public ResponseEntity<List<User>> getUsersByUniversity(@RequestHeader("Authorization") String token, @RequestParam String university){
+    public ResponseEntity<List<SearchUsersDto>> getUsersByUniversity(@RequestHeader("Authorization") String token, @RequestParam String university){
 
         String username = jwtService.extractUsername(token.substring(7));
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);

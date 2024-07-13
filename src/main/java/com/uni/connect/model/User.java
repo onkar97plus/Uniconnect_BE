@@ -28,6 +28,7 @@ public class User implements UserDetails {
     private String password;
     @Id
     private String username; //email
+    private String uid;
     private Role role;
     private int age;
     private String university;
