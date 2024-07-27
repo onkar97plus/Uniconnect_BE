@@ -99,7 +99,13 @@ public class InvitationService {
         }
     }
 
-    public ResponseEntity<String> acceptInvitation(String username, String acceptUser) {
+    public ResponseEntity<String> acceptInvitation(String username, String acceptUserUid) {
+
+        UidUnameMap byUid = uidUnameMapRepo.findByUid(acceptUserUid);
+
+        String acceptUser = byUid.getUsername();
+
+
         Optional<User> fetchedUser = userRepo.findByUsername(username);
         Optional<User> fetchedUser1 = userRepo.findByUsername(acceptUser);
 
@@ -134,4 +140,37 @@ public class InvitationService {
     }
 
 
+    public ResponseEntity<List<User>> getIncomingInvitations(String username) {
+
+        Optional<User> fetchedUser = userRepo.findByUsername(username);
+        if (fetchedUser.isPresent()) {
+            User user = fetchedUser.get();
+            List<String> incomingInvitations = user.getInvitations().getIncoming();
+            List<User> listOfIncomingUsers = new ArrayList<>();
+            for (String incoming : incomingInvitations) {
+                Optional<User> sentToUserObj = userRepo.findByUsername(incoming);
+                listOfIncomingUsers.add(sentToUserObj.get());
+            }
+            return new ResponseEntity<>(listOfIncomingUsers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<List<User>> fetchConnections(String username) {
+
+        Optional<User> fetchedUser = userRepo.findByUsername(username);
+        if (fetchedUser.isPresent()) {
+            User user = fetchedUser.get();
+            List<String> connections = user.getInvitations().getConnections();
+            List<User> listOfConnections = new ArrayList<>();
+            for (String cons : connections) {
+                Optional<User> connectedUser = userRepo.findByUsername(cons);
+                listOfConnections.add(connectedUser.get());
+            }
+            return new ResponseEntity<>(listOfConnections, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -46,13 +46,12 @@ public class CrudController {
     }
 
     @PutMapping("/updateProfile")
-    public ResponseEntity<String> UpdateUserProfile(@RequestHeader("Authorization") String token, @RequestBody User userRequest){
+    public ResponseEntity<?> UpdateUserProfile(@RequestHeader("Authorization") String token, @RequestBody User userRequest){
         String username = jwtService.extractUsername(token.substring(7));
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         if(jwtService.isValid(token.substring(7), userDetails)){
-
-            return crudService.updateProfile(userRequest, username);
+            return ResponseEntity.ok(crudService.updateProfile(userRequest, username));
 
         }else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token or token expired.");

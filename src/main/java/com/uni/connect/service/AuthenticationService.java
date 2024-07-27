@@ -77,11 +77,7 @@ public class AuthenticationService {
                 throw new IllegalArgumentException("Bad credentials");
             }
 
-        //User user = userRepo.findByUsername(request.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-
         String token = jwtService.generateToken(user);
-
-
 
         return new AuthenticationResponse(token);
 
