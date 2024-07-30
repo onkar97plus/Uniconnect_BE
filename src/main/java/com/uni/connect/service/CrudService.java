@@ -3,11 +3,13 @@ package com.uni.connect.service;
 import com.uni.connect.dao.UserRepo;
 import com.uni.connect.model.DTOs.SearchUsersDto;
 import com.uni.connect.model.Enums.RoommateSearchStatus;
+import com.uni.connect.model.Invitations;
 import com.uni.connect.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -102,39 +104,58 @@ public class CrudService {
 
         List<User> fetchedUsers = userRepo.findByUniversityAndSearchStatus(university, searchStatus);
 
+        Optional<User> byUsername = userRepo.findByUsername(excludeUsername);
+
+        User currentUser = byUsername.get();
+
         List<User> filteredUsers = fetchedUsers.stream()
                 .filter(user -> !user.getUsername().equals(excludeUsername))
                 .toList();
 
-        if (!fetchedUsers.isEmpty()) {
-            List<SearchUsersDto> searchUsersDtoList = new ArrayList<>();
-            for (User user : filteredUsers) {
-                SearchUsersDto searchUsersDto = new SearchUsersDto();
 
-                searchUsersDto.setFirstName(user.getFirstName());
-                searchUsersDto.setLastName(user.getLastName());
-                searchUsersDto.setReligion(user.getReligion());
-                searchUsersDto.setState(user.getState());
-                searchUsersDto.setYear(user.getYear());
-                searchUsersDto.setStartDate(user.getStartDate());
-                searchUsersDto.setEndDate(user.getEndDate());
-                searchUsersDto.setRoomPreference(user.getRoomPreference());
-                searchUsersDto.setEthnicity(user.getEthnicity());
-                searchUsersDto.setIntakeBatch(user.getIntakeBatch());
-                searchUsersDto.setSmoker(user.isSmoker());
-                searchUsersDto.setDrinker(user.isDrinker());
-                searchUsersDto.setEatingPreference(user.getEatingPreference());
-                searchUsersDto.setAge(user.getAge());
-                searchUsersDto.setUniversity(user.getUniversity());
-                searchUsersDto.setSearchStatus(user.getSearchStatus());
-                searchUsersDto.setUid(user.getUid());
+        List<SearchUsersDto> searchUsersDtoList = new ArrayList<>();
+        for (User user : filteredUsers) {
 
-                searchUsersDtoList.add(searchUsersDto);
+            SearchUsersDto searchUsersDto = new SearchUsersDto();
+
+            if (userInteraction(currentUser, user.getUsername())) {
+                searchUsersDto.setUserInteraction(true);
             }
-            return new ResponseEntity<>(searchUsersDtoList, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            searchUsersDto.setFirstName(user.getFirstName());
+            searchUsersDto.setLastName(user.getLastName());
+            searchUsersDto.setReligion(user.getReligion());
+            searchUsersDto.setState(user.getState());
+            searchUsersDto.setYear(user.getYear());
+            searchUsersDto.setStartDate(user.getStartDate());
+            searchUsersDto.setEndDate(user.getEndDate());
+            searchUsersDto.setRoomPreference(user.getRoomPreference());
+            searchUsersDto.setEthnicity(user.getEthnicity());
+            searchUsersDto.setIntakeBatch(user.getIntakeBatch());
+            searchUsersDto.setSmoker(user.isSmoker());
+            searchUsersDto.setDrinker(user.isDrinker());
+            searchUsersDto.setEatingPreference(user.getEatingPreference());
+            searchUsersDto.setAge(user.getAge());
+            searchUsersDto.setUniversity(user.getUniversity());
+            searchUsersDto.setSearchStatus(user.getSearchStatus());
+            searchUsersDto.setUid(user.getUid());
+
+            searchUsersDtoList.add(searchUsersDto);
         }
+
+        return new ResponseEntity<>(searchUsersDtoList, HttpStatus.OK);
+
+    }
+
+    private boolean userInteraction(User currentUser, String fetchedUserUserName) {
+
+        Invitations invitations = currentUser.getInvitations();
+
+        if (invitations != null) {
+            return currentUser.getInvitations().getIncoming().contains(fetchedUserUserName) || currentUser.getInvitations().getSent().contains(fetchedUserUserName)
+                    || currentUser.getInvitations().getConnections().contains(fetchedUserUserName);
+        }
+        return false;
     }
 
 }

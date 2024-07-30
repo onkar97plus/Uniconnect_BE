@@ -32,5 +32,6 @@ public class SearchUsersDto {
     private LocalDate endDate;
     private RoomPreference roomPreference;
     private String uid;
+    private boolean userInteraction = false;
 
 }
