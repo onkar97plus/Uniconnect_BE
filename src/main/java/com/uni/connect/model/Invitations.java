@@ -24,7 +24,7 @@ public class Invitations {
     private List<String> connections = new ArrayList<>();
     private List<String> rejected = new ArrayList<>();
 
-    private Map<String, Boolean> test = new HashMap<>();
+    private int numberOfLastIncomingRequests;
 
     public Invitations(String username) {
         this.username = username;

@@ -145,6 +145,9 @@ public class InvitationService {
         Optional<User> fetchedUser = userRepo.findByUsername(username);
         if (fetchedUser.isPresent()) {
             User user = fetchedUser.get();
+            if (user.getInvitations()==null){
+                return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
+            }
             List<String> incomingInvitations = user.getInvitations().getIncoming();
             List<User> listOfIncomingUsers = new ArrayList<>();
             for (String incoming : incomingInvitations) {
@@ -172,5 +175,58 @@ public class InvitationService {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    public int connectionPolling(String username){
+
+        Optional<User> fetchedUser = userRepo.findByUsername(username);
+        int totalIncomingConnections = 0;
+        if (fetchedUser.isPresent()) {
+            User user = fetchedUser.get();
+            if (user.getInvitations()==null){
+                return 0;
+            }
+            //user.getInvitations().getNumberOfLastIncomingRequests();
+            totalIncomingConnections = user.getInvitations().getIncoming().size();
+        }
+        return totalIncomingConnections;
+    }
+
+    public void saveRequestsOnLogout(String username) {
+
+        Optional<User> fetchedUser = userRepo.findByUsername(username);
+        if (fetchedUser.isPresent()) {
+            User user = fetchedUser.get();
+
+            if (user.getInvitations()==null){
+                return;
+            }
+
+            if(user.getInvitations().getIncoming().isEmpty()){
+                return;
+            }
+            int numberOfLastIncomingRequests = user.getInvitations().getIncoming().size();
+            Invitations invitations = user.getInvitations();
+            invitations.setNumberOfLastIncomingRequests(numberOfLastIncomingRequests);
+            invitationRepo.save(invitations);
+        }
+    }
+
+    public Integer getNewRequestsOnLogin(String username) {
+
+        Optional<User> fetchedUser = userRepo.findByUsername(username);
+        if (fetchedUser.isPresent()) {
+            User user = fetchedUser.get();
+
+            if (user.getInvitations()==null){
+                return 0;
+            }
+
+            if(user.getInvitations().getIncoming().isEmpty()){
+                return 0;
+            }
+            return user.getInvitations().getIncoming().size()-user.getInvitations().getNumberOfLastIncomingRequests();
+        }
+        return 0;
     }
 }

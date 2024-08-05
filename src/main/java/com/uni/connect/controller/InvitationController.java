@@ -109,5 +109,42 @@ public class InvitationController {
         }
     }
 
+    @GetMapping("/getNewConnectionRequests")
+    public ResponseEntity<Integer> connectionPollingController(@RequestHeader("Authorization") String token){
+        String username = jwtService.extractUsername(token.substring(7));
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        if(jwtService.isValid(token.substring(7), userDetails)){
+              return new ResponseEntity<>(invitationService.connectionPolling(username), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @PostMapping("/saveLastInvitationRequestsOnLogout")
+    public ResponseEntity<Void> saveLatestInvitationRequest(@RequestHeader("Authorization") String token){
+        String username = jwtService.extractUsername(token.substring(7));
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        if(jwtService.isValid(token.substring(7), userDetails)){
+            invitationService.saveRequestsOnLogout(username);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @GetMapping("/getNewConnectionRequestsOnLogin")
+    public ResponseEntity<Integer> newConnectionsOnLogin(@RequestHeader("Authorization") String token){
+        String username = jwtService.extractUsername(token.substring(7));
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        if(jwtService.isValid(token.substring(7), userDetails)){
+            return new ResponseEntity<>(invitationService.getNewRequestsOnLogin(username), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
 
 }

@@ -1,22 +1,28 @@
 package com.uni.connect.service;
 
+import com.uni.connect.dao.InvitationRepo;
 import com.uni.connect.dao.UidUnameMapRepo;
 import com.uni.connect.dao.UserRepo;
 import com.uni.connect.exceptions.UserNotFoundException;
 import com.uni.connect.model.AuthenticationResponse;
+import com.uni.connect.model.Invitations;
 import com.uni.connect.model.UidUnameMap;
 import com.uni.connect.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class AuthenticationService {
+    @Autowired
+    InvitationRepo invitationRepo;
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
@@ -47,6 +53,14 @@ public class AuthenticationService {
         user.setRole(request.getRole());
         user.setUid(UUID.randomUUID().toString());
 
+        // Initialize Invitations
+        Invitations invitations = new Invitations(user.getUsername());
+        invitations.setIncoming(new ArrayList<>());
+        invitations.setConnections(new ArrayList<>());
+        invitations.setSent(new ArrayList<>());
+        invitations.setRejected(new ArrayList<>());
+        user.setInvitations(invitations);
+
         //mapping uid to username
         UidUnameMap uidUname = new UidUnameMap();
         uidUname.setUid(user.getUid());
@@ -55,6 +69,7 @@ public class AuthenticationService {
         //Save to repo Operations
         user = userRepo.save(user);
         uidUnameMapRepo.save(uidUname);
+        invitationRepo.save(invitations);
 
         String token = jwtService.generateToken(user);
 
