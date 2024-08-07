@@ -212,7 +212,7 @@ public class InvitationService {
         }
     }
 
-    public Integer getNewRequestsOnLogin(String username) {
+    public int getNewRequestsOnLogin(String username) {
 
         Optional<User> fetchedUser = userRepo.findByUsername(username);
         if (fetchedUser.isPresent()) {
