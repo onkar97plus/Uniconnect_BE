@@ -40,8 +40,14 @@ public class CrudService {
             if (userRequest.getLastName() != null) {
                 existingUser.setLastName(userRequest.getLastName());
             }
+            if (userRequest.getGender() != null) {
+                existingUser.setGender(userRequest.getGender());
+            }
             if (userRequest.getAge() != 0) {
                 existingUser.setAge(userRequest.getAge());
+            }
+            if (userRequest.getPhoneNumber() != 0) {
+                existingUser.setPhoneNumber(userRequest.getPhoneNumber());
             }
             if (userRequest.getEatingPreference() != null) {
                 existingUser.setEatingPreference(userRequest.getEatingPreference());

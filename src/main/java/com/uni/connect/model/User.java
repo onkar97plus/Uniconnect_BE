@@ -29,6 +29,7 @@ public class User implements UserDetails {
     @Id
     private String username; //email
     private String uid;
+    private Gender gender;
     private Role role;
     private int age;
     private String university;
@@ -44,6 +45,7 @@ public class User implements UserDetails {
     private RoommateSearchStatus searchStatus;
     private LocalDate startDate;
     private LocalDate endDate;
+    private long phoneNumber;
     private RoomPreference roomPreference;
 
     @DBRef

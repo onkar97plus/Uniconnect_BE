@@ -110,6 +110,11 @@ public class InvitationService {
         Optional<User> fetchedUser1 = userRepo.findByUsername(acceptUser);
 
         Invitations invitations = fetchedUser.get().getInvitations();
+
+        if(invitations.getConnections().contains(acceptUser)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
         Invitations invitations1 = fetchedUser1.get().getInvitations();
 
         if (fetchedUser.isPresent() && fetchedUser1.isPresent()) {
