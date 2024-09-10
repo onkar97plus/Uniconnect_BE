@@ -58,6 +58,9 @@ public class CrudService {
             if (userRequest.getUniversity() != null) {
                 existingUser.setUniversity(userRequest.getUniversity());
             }
+            if (userRequest.getCourse() != null) {
+                existingUser.setCourse(userRequest.getCourse());
+            }
             if (userRequest.getAdditionalInformation() != null) {
                 existingUser.setAdditionalInformation(userRequest.getAdditionalInformation());
             }

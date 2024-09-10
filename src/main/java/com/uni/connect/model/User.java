@@ -33,6 +33,7 @@ public class User implements UserDetails {
     private Role role;
     private int age;
     private String university;
+    private String course;
     private int year;
     private SemesterIntake intakeBatch;
     private Ethnicity ethnicity;
@@ -50,6 +51,9 @@ public class User implements UserDetails {
 
     @DBRef
     private Invitations invitations;
+
+    @DBRef
+    private RoomPost roomPost;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
