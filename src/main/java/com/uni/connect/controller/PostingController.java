@@ -23,7 +23,7 @@ public class PostingController {
     @Autowired
     RoomPostService roomPostService;
 
-    @PostMapping("/createRoomPost")
+    @PutMapping("/createRoomPost")
     public ResponseEntity<?> saveLatestInvitationRequest(@RequestHeader("Authorization") String token, @RequestBody RoomPost roomPost){
         String username = jwtService.extractUsername(token.substring(7));
 
@@ -32,6 +32,19 @@ public class PostingController {
         if(jwtService.isValid(token.substring(7), userDetails)){
 
             return ResponseEntity.ok(roomPostService.createRoomPost(username,roomPost));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @GetMapping("/getUserPostings")
+    public ResponseEntity<?> getUserPostings(@RequestHeader("Authorization") String token){
+        String username = jwtService.extractUsername(token.substring(7));
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        if(jwtService.isValid(token.substring(7), userDetails)){
+
+            return ResponseEntity.ok(roomPostService.getUserRoomPosting(username));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

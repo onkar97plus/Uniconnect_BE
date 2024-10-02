@@ -6,6 +6,7 @@ import com.uni.connect.model.RoomPost;
 import com.uni.connect.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class RoomPostService {
         Optional<User> fetchedUser = userRepo.findByUsername(username);
         if (fetchedUser.isPresent()) {
             User user = fetchedUser.get();
+            roomPost.setUsername(username);
             user.setRoomPost(roomPost);
             userRepo.save(user);
             postRoomRepo.save(roomPost);
@@ -41,5 +43,15 @@ public class RoomPostService {
             return ResponseEntity.ok().body(null);
         }
         return ResponseEntity.ok(roomPosts);
+    }
+
+    public ResponseEntity<RoomPost> getUserRoomPosting(String username) {
+
+        Optional<RoomPost> roomPost = postRoomRepo.findByUsername(username);
+
+        if (roomPost.isEmpty()) {
+            return ResponseEntity.ok().body(null);
+        }
+        return new ResponseEntity<>(roomPost.get(), HttpStatus.OK);
     }
 }
