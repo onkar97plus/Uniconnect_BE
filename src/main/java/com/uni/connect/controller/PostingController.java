@@ -57,7 +57,7 @@ public class PostingController {
 
         if(jwtService.isValid(token.substring(7), userDetails)){
 
-            return ResponseEntity.ok(roomPostService.getAllRoomPostings());
+            return roomPostService.getAllRoomPostings();
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
